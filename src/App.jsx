@@ -1,122 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { ReactFlow, Background, Controls, applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { useState, useCallback } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+const initialNodes = [
+  {
+    id: 'n1',
+    position: { x: 0, y: 0 },
+    data: { label: 'Node 1' },
+    type: 'input',
+  },
+  {
+    id: 'n2',
+    position: { x: 100, y: 100 },
+    data: { label: 'Node 2' },
+  },
+  {
+    id: 'n3',
+    position: { x: 200, y: 200 },
+    data: { label: 'Node 3' },
+  }
+];
+
+const initialEdges = [
+  {
+    id: 'n1-n2',
+    source: 'n1',
+    target: 'n2',
+    type:'step',
+    label:'connects with'
+
+  },
+  {
+    id: 'n2-n3',
+    source: 'n2',
+    target: 'n3',
+    //type:'step',
+    //label:'connects with'
+  }
+];
+
+export default function App() {
+  const [nodes, setNodes] = useState(initialNodes);
+  const [edges, setEdges] = useState(initialEdges);
+
+  const onNodesChange = useCallback(
+  (changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),[],);
+  const onEdgesChange = useCallback(
+  (changes) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),[],);
+  const onConnect = useCallback(
+  (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),[],);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+    <div style={{ height: '100%', width: '100%' }}>
+      <ReactFlow  
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        fitView
+        panOnScroll={true}
+        selectionOnDrag={true}
+        panOnDrag={false}
+        selectionMode="partial"
         >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <Background />
+        <Controls />
+      </ReactFlow>
+    </div>
+  );
 }
-
-export default App
